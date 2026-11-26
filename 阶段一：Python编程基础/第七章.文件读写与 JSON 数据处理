@@ -1,0 +1,262 @@
+之前我们已经学会了：
+- 使用变量保存数据。
+- 使用列表、字典和集合管理数据。
+- 使用函数封装智能体的功能。
+- 使用模块和包组织项目代码。
+但是，目前我们的程序存在一个问题：
+
+程序一旦关闭，之前保存在变量中的数据就会消失。
+
+例如，你让 AI 智能体记录三个任务：
+  tasks = ["学习Python", "开发AI智能体", "学习API"]
+  程序运行时可以查询这些任务。
+
+但如果关闭程序，再次打开，列表就会重新创建，之前的数据不会自动保留。
+
+今天我们就要解决这个问题
+  一、什么是文件读写？
+文件读写就是让 Python 程序能够：
+1. 创建文件。
+2. 向文件写入数据。
+3. 从文件读取数据。
+4. 修改和删除文件中的数据。
+例如，我们可以让 AI 智能体创建一个文件：
+memory.txt
+用户喜欢使用中文交流
+用户正在学习Python
+用户正在开发AI智能体
+
+  这就是最简单的持久化记忆：数据保存在文件中，而不是只存在内存中。
+二、open()：打开文件
+Python 使用 open() 函数打开文件。
+
+基本格式：
+  open("文件名", "打开模式")
+例如
+  file = open("memory.txt", "w", encoding="utf-8")
+逐项解释：
+内容	含义
+memory.txt	文件名称
+w	写入模式
+encoding="utf-8"	使用 UTF-8 编码，避免中文乱码
+  1. 四种常用文件打开模式
+这是本课必须掌握的知识。
+模式	    含义	          文件不存在时
+r	        读取	            报错
+w	     写入，覆盖原内容	  自动创建
+a	      追加内容         	自动创建
+x	      独占创建	          文件存在时报错
+
+  特别注意：
+- w 会清空原文件内容，然后重新写入。
+- a 会保留原内容，在末尾追加。
+- r 只能读取，不会自动创建文件。
+这几个模式在 AI 智能体的记忆系统中非常重要。
+
+三、write()：向文件写入内容
+先创建一个 Python 文件，尝试下面的代码：
+file = open("memory.txt", "w", encoding="utf-8")
+file.write("你好，我是AI助手！")
+file.close()
+运行后，你会发现项目目录中多了一个：
+
+memory.txt
+
+里面保存着：你好，我是AI助手！
+  第一行 file = open("memory.txt", "w", encoding="utf-8")
+  表示打开文件并将文件赋值给file
+  第二行 file.write("你好，我是AI助手！")
+  向文件中输入字符串
+  第三行 file.cloe()
+  关闭文件释放资源
+  注意：write() 不会自动在末尾添加换行符。
+四、read()：读取文件
+现在我们已经能够写入文件，接下来学习如何读取。
+  file = open("memory.txt", "r", encoding="utf-8")
+
+content = file.read()
+
+print(content)
+
+file.close()
+  运行后，Python 会读取文件中的全部内容。
+三种常见读取方式
+1. read()：读取全部内容
+  content = file.read()
+2. readline()：读取一行
+  content = file.readline()
+3. readlines()：读取所有行，返回列表
+  content = file.readlines()
+五、with：更安全的文件操作方式
+前面我们使用：
+  file = open(...)
+  file.close()
+但是，如果程序中间发生错误，可能导致文件没有正常关闭。
+Python 提供了更推荐的写法：with。
+  with open("memory.txt", "r", encoding="utf-8") as file:
+    content = file.read()
+    print(content)
+这里不需要手动调用 close()。
+
+Python 会在离开 with 代码块时自动关闭文件。
+
+建议：今后我们的 AI 智能体项目，文件读写优先使用 with open()。
+六、JSON：AI 智能体最重要的数据格式之一  JavaScript Object Notation
+前面学习的普通文本文件虽然可以保存数据，但有一个问题：
+
+如果我们需要保存复杂的数据，例如用户信息、任务列表、执行记录，该怎么办？
+
+假设我们想保存：
+- 用户姓名。
+- 用户年龄。
+- 用户的任务。
+- 用户的偏好。
+- AI 的历史记录。
+普通文本不太方便管理。
+
+这时就需要学习 JSON。
+1. 什么是 JSON？
+JSON 全称是 JavaScript Object Notation，是一种轻量级的数据交换格式。
+
+它可以将数据组织成结构化的形式。
+
+例如：
+  {
+    "name": "张三",
+    "age": 20,
+    "tasks": [
+        "学习Python",
+        "开发AI智能体",
+        "学习API"
+    ],
+    "preferences": {
+        "language": "中文",
+        "style": "详细讲解"
+    }
+}
+
+似乎与Python中的字典很像
+  但是两者并不完全相同：
+Python 字典	                         JSON
+Python 内部的数据结构	               通用数据交换格式
+可以包含多种 Python 对象	             支持有限的数据类型
+使用 True、False、None	               使用 true、false、null
+
+  2. 导入 json 模块
+Python 自带 JSON 模块，不需要额外安装。
+  import json
+
+  函数	       作用
+json.dumps()	Python 数据转换成 JSON 字符串
+json.loads()	JSON 字符串转换成 Python 数据
+json.dump()	  将 Python 数据写入文件
+json.load()	  从文件读取 JSON 数据
+
+这是今天最重要的知识点。
+3. dumps()：Python 数据转换成 JSON 字符串
+  import json
+
+user = {
+    "name": "张三",
+    "age": 20,
+    "tasks": ["学习Python", "开发AI"]
+}
+
+result = json.dumps(user, ensure_ascii=False)
+
+print(result)
+  运行结果：
+{"name": "张三", "age": 20, "tasks": ["学习Python", "开发AI"]}  
+这里有一个非常重要的参数：
+  ensure_ascii=False
+它表示不强制将中文转换为 Unicode 转义形式，让输出结果更容易阅读。
+如果不写这个参数，中文通常会显示成类似 \u5f20\u4e09 的形式。
+4. loads()：JSON 字符串转换成 Python 数据
+刚才我们将 Python 字典转换成了 JSON 字符串。
+
+现在反过来操作：
+  import json
+
+data = '{"name": "张三", "age": 20}'
+
+user = json.loads(data)
+
+print(user)
+print(user["name"])
+print(user["age"])
+
+  注意：
+
+loads() 中的 s 代表 string，也就是字符串。
+
+它处理的是 JSON 字符串，而不是文件路径。
+
+5. dump()：把数据保存到 JSON 文件
+这是我们未来 AI 智能体记忆系统最常用的操作之一。
+  import json
+
+user = {
+    "name": "张三",
+    "age": 20,
+    "tasks": ["学习Python", "开发AI智能体"]
+}
+
+with open("user_memory.json", "w", encoding="utf-8") as file:
+    json.dump(user, file, ensure_ascii=False, indent=4)
+运行后，会自动创建：
+
+user_memory.json
+
+内容如下：
+      {
+    "name": "张三",
+    "age": 20,
+    "tasks": [
+        "学习Python",
+        "开发AI智能体"
+    ]
+}
+运行后，会自动创建：
+user_memory.json
+内容如下：
+  {
+    "name": "张三",
+    "age": 20,
+    "tasks": [
+        "学习Python",
+        "开发AI智能体"
+    ]
+}
+这里新增了一个参数：indent=4  它表示 JSON 文件采用四个空格进行缩进，让数据结构更清晰。
+  6. load()：从 JSON 文件读取数据
+现在我们把刚才保存的数据重新读取出来：
+import json
+
+with open("user_memory.json", "r", encoding="utf-8") as file:
+    user = json.load(file)
+
+print(user)
+print(user["name"])
+print(user["tasks"])
+  这样，即使程序关闭，再次运行时也可以读取之前保存的数据。
+七、综合实战：打造 AI 智能体记忆系统
+本课核心项目
+现在，我们要把前面学习的知识整合起来。
+
+我们的目标是：
+
+让 AI 智能体能够添加记忆、保存记忆、读取记忆。
+
+例如：
+
+你对 AI 说：
+
+「记住，我正在学习 Python。」
+
+AI 将这条信息保存到 JSON 文件。
+
+第二天重新打开程序，AI 依然能够读取这条信息。
+编写记忆管理模块
+打开：
+
+memory/memory_manager.py
