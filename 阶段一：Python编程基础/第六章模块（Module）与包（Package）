@@ -1,0 +1,234 @@
+一、为什么需要模块？
+先回顾一下上一课的代码：
+def greet(name):
+    return "你好，" + name
+
+
+def add(a, b):
+    return a + b
+
+
+def get_tasks():
+    return ["学习Python", "整理文件", "查看微信"]
+假设我们的 AI 智能体未来需要具备：
+- 数学计算
+- 文件管理
+- 微信消息处理
+- 网络搜索
+- 日历管理
+- AI 对话
+- 用户记忆
+如果把所有代码都写在一个 Python 文件中，会出现什么问题？
+1. 文件越来越长。
+2. 不同功能混在一起。
+3. 修改某个功能可能影响其他功能。
+4. 后期维护非常困难。
+所以，我们需要把不同功能拆分到不同文件中。
+
+这就是模块化编程的思想。
+二、什么是模块？
+模块（Module）就是一个 Python 文件。
+
+例如，我们创建三个文件：
+AI智能体项目
+
+main.py
+主程序
+
+calculator.py
+
+计算功能
+
+assistant.py
+
+助手功能
+
+
+
+每个文件都可以保存自己的函数和变量。
+1. 创建第一个模块
+新建一个文件，命名为：
+
+calculator.py
+
+写入：
+def add(a, b):
+    return a + b
+
+
+def subtract(a, b):
+    return a - b
+
+
+def multiply(a, b):
+    return a * b
+这个文件就是一个模块。
+
+它包含三个数学计算函数。
+2. 导入模块：import
+现在创建另一个文件：
+
+main.py
+
+写入：
+import calculator #将外部文件导入另一个文件
+
+result = calculator.add(10, 20)
+
+print(result)
+我们来逐行理解：
+代码	含义
+import calculator	导入 calculator 模块
+calculator.add()	调用模块中的 add 函数
+print(result)	输出计算结果
+3. 使用 from 导入指定函数
+如果我们只需要某一个函数，可以这样写：
+from calculator import add
+
+result = add(10, 20)
+
+print(result)
+这时不需要再写 calculator.add()。
+
+两种方式的区别：
+import calculator
+calculator.add(10, 20)
+
+from calculator import add
+add(10, 20)
+第一种导入整个模块，第二种只导入指定成员。
+4. 使用 as 给模块起别名
+如果模块名称比较长，可以使用 as。
+import calculator as cal
+
+result = cal.add(10, 20)
+
+print(result)
+这里：
+- calculator 是原模块名称。
+- cal 是我们设置的别名。
+这样可以简化代码。
+三、Python 自带的常用模块
+Python 不仅允许我们自己创建模块，还提供了大量内置模块。
+
+这意味着我们不必所有功能都自己编写。
+1. random：随机数模块
+import random
+number = random.randint(1, 100)
+print(number)
+randint(1, 100) 表示随机生成 1 到 100 之间的整数，包含两端。
+
+应用场景：让 AI 智能体随机生成验证码、随机选择任务等。
+2. time：时间模块
+import time
+
+print("程序开始")
+
+time.sleep(3)
+
+print("3秒后执行")
+time.sleep(3) 表示让程序暂停 3 秒。
+
+应用场景：任务等待、定时执行。
+3. datetime：日期时间模块
+import datetime
+
+now = datetime.datetime.now()
+
+print(now)
+它可以获取当前日期和时间。
+
+应用场景：记录 AI 智能体执行任务的时间。
+4. os：操作系统模块
+import os
+
+print(os.getcwd())
+还可以
+import os
+
+print(os.listdir())
+获取当前目录下的文件和文件夹列表。
+
+应用场景：AI 智能体管理电脑文件。
+重要提示
+os 模块具有操作文件和系统环境的能力。以后让 AI 使用这些功能时，我们需要增加权限限制，避免误删文件或执行未经授权的操作。
+
+四、什么是包（Package）？
+刚才我们学会了把代码拆分成多个模块。
+
+但如果项目继续扩大，可能会出现几十个甚至几百个 Python 文件。
+
+这时就需要进一步分类管理。
+
+包（Package）就是用来组织多个模块的目录结构。
+
+例如：
+AI_Agent
+
+main.py
+
+tools/
+
+calculator.py
+
+file_manager.py
+
+web_search.py
+
+__init__.py
+
+
+memory/
+
+memory_manager.py
+
+__init__.py
+
+
+
+
+这里：
+- tools 是工具包。
+- memory 是记忆管理包。
+- calculator.py 是计算模块。
+- file_manager.py 是文件管理模块
+1. 如何导入包中的模块？
+例如：
+from tools import calculator
+
+result = calculator.add(10, 20)
+
+print(result)
+也可以：
+from tools.calculator import add
+
+print(add(10, 20))
+第二种方式直接导入了计算模块中的 add 函数。
+五、AI 智能体实战：搭建模块化项目
+现在开始把今天学到的知识应用到我们的 AI 智能体。
+
+目标：建立一个拥有独立计算、任务管理和主程序的简易智能体。
+第一步：创建项目目录
+创建以下文件结构：
+六、进阶知识：if __name__ == "__main__"
+这是 Python 模块学习中一个非常重要的知识点。
+
+先看代码：
+def greet():
+    print("你好，我是AI助手")
+if __name__ == "__main__":
+    greet()
+这里的：
+if __name__ == "__main__":
+是什么意思？
+
+简单理解：
+- 如果当前文件是直接运行的主程序，就执行下面的代码。
+- 如果当前文件是被其他文件导入的模块，就不执行这部分代码。
+例如，你直接运行 calculator.py，其中的主程序代码会执行。
+
+但如果 main.py 导入 calculator.py，calculator.py 中这个判断内部的代码不会自动执行。
+
+这样可以避免导入模块时意外运行一些程序。
+
+以后我们的 AI 智能体会有很多模块，这个写法非常常见。
